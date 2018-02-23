@@ -29,15 +29,9 @@ namespace five.Views
         {
             get { return _isPaneOpen; }
             set { Set(ref _isPaneOpen, value); }
-        }
+        }      
 
-        private object _selected;
-
-        public object Selected
-        {
-            get { return _selected; }
-            set { Set(ref _selected, value); }
-        }
+       
 
         private SplitViewDisplayMode _displayMode = SplitViewDisplayMode.CompactInline;
 
@@ -106,9 +100,10 @@ namespace five.Views
             // More on Segoe UI Symbol icons: https://docs.microsoft.com/windows/uwp/style/segoe-ui-symbol-font
             // Or to use an IconElement instead of a Symbol see https://github.com/Microsoft/WindowsTemplateStudio/blob/master/docs/projectTypes/navigationpane.md
             // Edit String/en-US/Resources.resw: Add a menu item title for each page
-            _primaryItems.Add(ShellNavigationItem.FromType<MainPage>("Shell_Main".GetLocalized(), Symbol.Document));
-            _primaryItems.Add(ShellNavigationItem.FromType<GridPage>("Shell_Orders".GetLocalized(), Symbol.Document));
-            _secondaryItems.Add(ShellNavigationItem.FromType<SettingsPage>("Shell_Settings".GetLocalized(), Symbol.Setting));
+            //_primaryItems.Add(ShellNavigationItem.FromType<MainPage>("Shell_Main".GetLocalized(), Symbol.Document));
+            _primaryItems.Add(new ShellNavigationItem("Shell_Main".GetLocalized(), Symbol.Document, typeof(MainPage)));
+            _primaryItems.Add(new ShellNavigationItem("Shell_Orders".GetLocalized(), Symbol.Document, typeof(GridPage)));
+            _secondaryItems.Add(new ShellNavigationItem("Shell_Settings".GetLocalized(), Symbol.Setting, typeof(SettingsPage)));           
         }
 
         private void Frame_Navigated(object sender, NavigationEventArgs e)
@@ -135,8 +130,7 @@ namespace five.Views
 
             if (newValue != null)
             {
-                (newValue as ShellNavigationItem).IsSelected = true;
-                Selected = newValue;
+                (newValue as ShellNavigationItem).IsSelected = true;              
             }
         }
 

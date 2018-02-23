@@ -17,14 +17,6 @@ namespace five.Views
 
         public Type PageType { get; set; }
 
-        private Visibility _selectedVis = Visibility.Collapsed;
-
-        public Visibility SelectedVis
-        {
-            get { return _selectedVis; }
-
-            set { Set(ref _selectedVis, value); }
-        }
 
         public char SymbolAsChar
         {
@@ -37,24 +29,24 @@ namespace five.Views
         {
             get
             {
-                var foregroundBinding = new Binding
-                {
-                    Source = this,
-                    Path = new PropertyPath("SelectedForeground"),
-                    Mode = BindingMode.OneWay,
-                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                };
+                //var foregroundBinding = new Binding
+                //{
+                //    Source = this,
+                //    Path = new PropertyPath("SelectedForeground"),
+                //    Mode = BindingMode.OneWay,
+                //    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                //};
 
                 if (_iconElement != null)
                 {
-                    BindingOperations.SetBinding(_iconElement, IconElement.ForegroundProperty, foregroundBinding);
+                    //BindingOperations.SetBinding(_iconElement, IconElement.ForegroundProperty, foregroundBinding);
 
                     return _iconElement;
                 }
 
                 var fontIcon = new FontIcon { FontSize = 16, Glyph = SymbolAsChar.ToString() };
 
-                BindingOperations.SetBinding(fontIcon, IconElement.ForegroundProperty, foregroundBinding);
+                    //BindingOperations.SetBinding(fontIcon, IconElement.ForegroundProperty, foregroundBinding);
 
                 return fontIcon;
             }
@@ -71,13 +63,10 @@ namespace five.Views
 
             set
             {
-                Set(ref _isSelected, value);
+                Set(ref _isSelected, value);               
 
-                SelectedVis = value ? Visibility.Visible : Visibility.Collapsed;
-
-                SelectedForeground = IsSelected
-                    ? Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush
-                    : GetStandardTextColorBrush();
+                SelectedForeground = IsSelected ?
+                    GetSelectedTextColorBrush() : GetStandardTextColorBrush();
             }
         }
 
@@ -85,18 +74,22 @@ namespace five.Views
 
         public SolidColorBrush SelectedForeground
         {
-            get { return _selectedForeground ?? (_selectedForeground = GetStandardTextColorBrush()); }
-            set { Set(ref _selectedForeground, value); }
+            get
+            {
+                return _selectedForeground ?? (_selectedForeground = GetStandardTextColorBrush());
+            }
+            set
+            {
+                Set(ref _selectedForeground, value);
+            }
         }
 
-        private ShellNavigationItem(string label, Symbol symbol, Type pageType)
-            : this(label, pageType)
+        public ShellNavigationItem(string label, Symbol symbol, Type pageType) : this(label, pageType)
         {
             Symbol = symbol;
         }
 
-        private ShellNavigationItem(string label, IconElement icon, Type pageType)
-            : this(label, pageType)
+        private ShellNavigationItem(string label, IconElement icon, Type pageType) : this(label, pageType)
         {
             _iconElement = icon;
         }
@@ -107,23 +100,14 @@ namespace five.Views
             PageType = pageType;
         }
 
-        public static ShellNavigationItem FromType<T>(string label, Symbol symbol)
-            where T : Page
-        {
-            return new ShellNavigationItem(label, symbol, typeof(T));
-        }
-
-        public static ShellNavigationItem FromType<T>(string label, IconElement icon)
-            where T : Page
-        {
-            return new ShellNavigationItem(label, icon, typeof(T));
-        }
-
         private SolidColorBrush GetStandardTextColorBrush()
         {
-            var brush = Application.Current.Resources["ThemeControlForegroundBaseHighBrush"] as SolidColorBrush;
+            return Application.Current.Resources["ThemeControlForegroundBaseHighBrush"] as SolidColorBrush;
+        }
 
-            return brush;
+        private SolidColorBrush GetSelectedTextColorBrush()
+        {
+            return Application.Current.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
         }
 
         public override string ToString()
@@ -144,6 +128,9 @@ namespace five.Views
             OnPropertyChanged(propertyName);
         }
 
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
